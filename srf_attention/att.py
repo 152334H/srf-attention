@@ -47,7 +47,7 @@ class Attention(torch.nn.Module):
     def forward(self, q=None, k=None, v=None, mode = None, attn_fn = None, chunk_size=None):
         assert mode in ['train'] and attn_fn in ['torch', 'flash']
         if self.redraw_on_call:
-            self.redraw_(device = q.device)
+            self.redraw_()
         
         if mode == 'train':
             if attn_fn == 'torch':
