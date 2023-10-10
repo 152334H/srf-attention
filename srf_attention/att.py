@@ -45,7 +45,7 @@ class Attention(torch.nn.Module):
 
     # q, k, v should be of shape (b, h, l, d)
     def forward(self, q=None, k=None, v=None, mode = None, attn_fn = None, chunk_size=None):
-        assert mode in ['train'] and attn_fn in ['torch', 'flash']
+        assert mode in ['train', 'inference'] and attn_fn in ['torch', 'flash']
         if self.redraw_on_call:
             self.redraw_(device = q.device)
         
@@ -60,3 +60,6 @@ class Attention(torch.nn.Module):
                 v = v.transpose(1, 2)
                 o = self.forward_train_flash(q, k, v)
                 return o.transpose(1, 2)
+        elif mode == 'inference':
+            if attn_fn == 'flash': raise NotImplementedError('funny')
+            return self.forward_train_torch(q,k,v, chunk_size=chunk_size) # this probably does not work
